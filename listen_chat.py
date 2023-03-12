@@ -19,13 +19,13 @@ async def save_message(host, port, file_name):
 
 
 def main():
-    message_history_file = 'message_history.txt'
-    logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                        level=logging.DEBUG)
     env = Env()
     env.read_env()
     host = env('CONNECTING_HOST')
     port = env('CONNECTING_PORT')
+    message_history_file = 'message_history.txt'
+    logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                        level=logging.DEBUG)
     asyncio.run(save_message(host, port, message_history_file))
 
 
