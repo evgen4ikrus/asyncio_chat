@@ -28,7 +28,7 @@ async def save_message(host, port, file_path, enabled_console):
         if enabled_console:
             logger.info(message)
         async with aiofiles.open(file_path, mode='a') as file:
-            await file.write(message)
+            await file.write(f'{message}\n')
 
 
 def main():
