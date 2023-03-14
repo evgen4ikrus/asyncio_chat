@@ -24,7 +24,7 @@ async def save_message(host, port, file_path, enabled_console):
     reader, writer = await asyncio.open_connection(host, port)
     while True:
         chunk = await reader.readline()
-        message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {chunk.decode()}'
+        message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {chunk.decode().rstrip()}'
         if enabled_console:
             logger.info(message)
         async with aiofiles.open(file_path, mode='a') as file:
@@ -34,8 +34,7 @@ async def save_message(host, port, file_path, enabled_console):
 def main():
     env = Env()
     env.read_env()
-    logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                        level=logging.DEBUG)
+    logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s %(message)s', level=logging.DEBUG)
     possible_host, possible_port, possible_message_history_path, enabled_console = get_args()
     host = possible_host or env('CONNECTING_HOST', 'minechat.dvmn.org')
     port = possible_port or env.int('CONNECTING_PORT', 5000)
