@@ -1,7 +1,9 @@
 import asyncio
+import json
 import logging
-from environs import Env
 from datetime import datetime
+
+from environs import Env
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +22,9 @@ async def send_message(host, port, token, message):
         await write_to_socket(writer, token)
         logger.info(f'Sent message: {token}')
         response = await reader.readline()
+        if not json.loads(response):
+            logger.error('Невалидный токен')
+            return 
         incoming_message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {response.decode().rstrip()}'
         logger.info(incoming_message)
     response = await reader.readline()
