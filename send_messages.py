@@ -14,16 +14,16 @@ async def write_to_socket(writer, message):
 async def send_message(host, port, token, message):
     reader, writer = await asyncio.open_connection(host, port)
     if token:
-        chunk = await reader.readline()
-        outgoing_message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {chunk.decode().rstrip()}'
+        response = await reader.readline()
+        outgoing_message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {response.decode().rstrip()}'
         logger.info(outgoing_message)
         await write_to_socket(writer, token)
         logger.info(f'Sent message: {token}')
-        chunk = await reader.readline()
-        incoming_message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {chunk.decode().rstrip()}'
+        response = await reader.readline()
+        incoming_message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {response.decode().rstrip()}'
         logger.info(incoming_message)
-    chunk = await reader.readline()
-    incoming_message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {chunk.decode().rstrip()}'
+    response = await reader.readline()
+    incoming_message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {response.decode().rstrip()}'
     logger.info(incoming_message)
     await write_to_socket(writer, message)
     logger.info(f'Sent message: {message}')
