@@ -56,9 +56,9 @@ async def send_message(host, port, token, message, username):
         await authorise(reader, writer, token, username)
     else:
         logger.info('Вы не зарегистрированы, сейчас будет произведена регистрация')
-        await write_to_socket(writer, '')
+        await write_to_socket(writer, '\n')
         await register_user(reader, writer, username)
-    await write_to_socket(writer, message)
+    await write_to_socket(writer, f'{message}\n')
     logger.info(f'Вы отправили сообщения в чат: {message}')
 
 
