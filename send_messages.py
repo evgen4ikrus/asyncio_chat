@@ -13,6 +13,17 @@ async def write_to_socket(writer, message):
     await writer.drain()
 
 
+async def authorise(reader, writer, token):
+    await write_to_socket(writer, token)
+    response = await reader.readline()
+    user = json.loads(response)
+    if user:
+        logger.info(f'Вы зашли под ником: {user.get("nickname")}')
+    else:
+        logger.info('Невалидный токен, сейчас будет произведена регистрация')
+        await register_user(reader, writer)
+
+
 async def register_user(reader, writer):
     await write_to_socket(writer, '\n')
     await reader.readline()
@@ -30,14 +41,7 @@ async def send_message(host, port, token, message):
     reader, writer = await asyncio.open_connection(host, port)
     if token:
         await reader.readline()
-        await write_to_socket(writer, token)
-        response = await reader.readline()
-        user = json.loads(response)
-        if user:
-            logger.info(f'Вы зашли под ником: {user.get("nickname")}')
-        else:
-            logger.info('Невалидный токен, сейчас будет произведена регистрация')
-            await register_user(reader, writer)
+        await authorise(reader, writer, token)
     else:
         logger.info('Вы не зарегистрированы, сейчас будет произведена регистрация')
         await reader.readline()
