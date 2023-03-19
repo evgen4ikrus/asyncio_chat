@@ -57,7 +57,8 @@ def main():
     chat_host = env('CHAT_HOST', 'minechat.dvmn.org')
     chat_port = env.int('CHAT_PORT', 5050)
     chat_token = env('CHAT_TOKEN', '')
-    asyncio.run(send_message(chat_host, chat_port, chat_token, 'Привет'))
+    message = 'При\nвет\n \n \n'.replace("\n", "\\n")
+    asyncio.run(send_message(chat_host, chat_port, chat_token, message))
 
 
 if __name__ == '__main__':
