@@ -36,10 +36,10 @@ def main():
     env.read_env()
     logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s %(message)s', level=logging.DEBUG)
     possible_host, possible_port, possible_message_history_path, enabled_console = get_args()
-    host = possible_host or env('CONNECTING_HOST', 'minechat.dvmn.org')
-    port = possible_port or env.int('CONNECTING_PORT', 5000)
+    chat_host = possible_host or env('CHAT_HOST', 'minechat.dvmn.org')
+    listening_messages_chat_port = possible_port or env.int('LISTENING_MESSAGES_CHAT_PORT', 5000)
     message_history_path = possible_message_history_path or env('MESSAGE_HISTORY_PATH', 'message_history.txt')
-    asyncio.run(save_message(host, port, message_history_path, enabled_console))
+    asyncio.run(save_message(chat_host, listening_messages_chat_port, message_history_path, enabled_console))
 
 
 if __name__ == '__main__':
