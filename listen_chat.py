@@ -22,13 +22,18 @@ def get_args():
 
 async def save_message(host, port, file_path, enabled_console):
     reader, writer = await asyncio.open_connection(host, port)
-    while True:
-        chunk = await reader.readline()
-        message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {chunk.decode().rstrip()}'
-        if enabled_console:
-            logger.info(message)
-        async with aiofiles.open(file_path, mode='a') as file:
-            await file.write(f'{message}\n')
+    try:
+        while True:
+            chunk = await reader.readline()
+            message = f'[{datetime.now().strftime("%Y-%m-%d, %H:%M")}] {chunk.decode().rstrip()}'
+            if enabled_console:
+                logger.info(message)
+            async with aiofiles.open(file_path, mode='a') as file:
+                await file.write(f'{message}\n')
+    finally:
+        writer.close()
+        await writer.wait_closed()
+        logger.info('Подключение закрыто')
 
 
 def main():

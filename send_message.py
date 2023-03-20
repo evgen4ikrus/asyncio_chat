@@ -51,15 +51,20 @@ async def register_user(reader, writer, username):
 
 async def send_message(host, port, token, message, username):
     reader, writer = await asyncio.open_connection(host, port)
-    await reader.readline()
-    if token:
-        await authorise(reader, writer, token, username)
-    else:
-        logger.info('Вы не зарегистрированы, сейчас будет произведена регистрация')
-        await write_to_socket(writer, '\n')
-        await register_user(reader, writer, username)
-    await write_to_socket(writer, f'{message}\n')
-    logger.info(f'Вы отправили сообщения в чат: {message}')
+    try:
+        await reader.readline()
+        if token:
+            await authorise(reader, writer, token, username)
+        else:
+            logger.info('Вы не зарегистрированы, сейчас будет произведена регистрация')
+            await write_to_socket(writer, '\n')
+            await register_user(reader, writer, username)
+        await write_to_socket(writer, f'{message}\n')
+        logger.info(f'Вы отправили сообщения в чат: {message}')
+    finally:
+        writer.close()
+        await writer.wait_closed()
+        logger.info('Подключение закрыто')
 
 
 def main():
