@@ -6,6 +6,8 @@ import logging
 import aiofiles
 from environs import Env
 
+from tcp_tools import open_connection
+
 logger = logging.getLogger(__name__)
 
 
@@ -50,8 +52,8 @@ async def register_user(reader, writer, username):
 
 
 async def send_message(host, port, token, message, username):
-    reader, writer = await asyncio.open_connection(host, port)
-    try:
+    async with open_connection(host, port) as connection:
+        reader, writer = connection
         await reader.readline()
         if token:
             await authorise(reader, writer, token, username)
@@ -61,10 +63,6 @@ async def send_message(host, port, token, message, username):
             await register_user(reader, writer, username)
         await write_to_socket(writer, f'{message}\n')
         logger.info(f'Вы отправили сообщения в чат: {message}')
-    finally:
-        writer.close()
-        await writer.wait_closed()
-        logger.info('Подключение закрыто')
 
 
 def main():
